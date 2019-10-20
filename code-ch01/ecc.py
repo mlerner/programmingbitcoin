@@ -3,11 +3,9 @@ from unittest import TestCase
 
 # tag::source1[]
 class FieldElement:
-
     def __init__(self, num, prime):
         if num >= prime or num < 0:  # <1>
-            error = 'Num {} not in field range 0 to {}'.format(
-                num, prime - 1)
+            error = 'Num {} not in field range 0 to {}'.format(num, prime - 1)
             raise ValueError(error)
         self.num = num  # <2>
         self.prime = prime
@@ -19,11 +17,12 @@ class FieldElement:
         if other is None:
             return False
         return self.num == other.num and self.prime == other.prime  # <3>
+
     # end::source1[]
 
     def __ne__(self, other):
         # this should be the inverse of the == operator
-        raise NotImplementedError
+        return self.prime != other.prime or self.num != other.num  # <3>
 
     # tag::source2[]
     def __add__(self, other):
@@ -31,6 +30,7 @@ class FieldElement:
             raise TypeError('Cannot add two numbers in different Fields')
         num = (self.num + other.num) % self.prime  # <2>
         return self.__class__(num, self.prime)  # <3>
+
     # end::source2[]
 
     def __sub__(self, other):
@@ -39,7 +39,9 @@ class FieldElement:
         # self.num and other.num are the actual values
         # self.prime is what we need to mod against
         # We return an element of the same class
-        raise NotImplementedError
+        num = (self.num - other.num) % self.prime  # <2>
+
+        return self.__class__(num, self.prime)
 
     def __mul__(self, other):
         if self.prime != other.prime:
@@ -47,13 +49,16 @@ class FieldElement:
         # self.num and other.num are the actual values
         # self.prime is what we need to mod against
         # We return an element of the same class
-        raise NotImplementedError
+        num = (self.num * other.num) % self.prime  # <2>
+
+        return self.__class__(num, self.prime)
 
     # tag::source3[]
     def __pow__(self, exponent):
         n = exponent % (self.prime - 1)  # <1>
         num = pow(self.num, n, self.prime)
         return self.__class__(num, self.prime)
+
     # end::source3[]
 
     def __truediv__(self, other):
@@ -64,11 +69,11 @@ class FieldElement:
         # this means:
         # 1/n == pow(n, p-2, p)
         # We return an element of the same class
-        raise NotImplementedError
+        num = (self.num * pow(other.num, self.prime - 2)) % self.prime
+        return self.__class__(num, self.prime)
 
 
 class FieldElementTest(TestCase):
-
     def test_ne(self):
         a = FieldElement(2, 31)
         b = FieldElement(2, 31)
