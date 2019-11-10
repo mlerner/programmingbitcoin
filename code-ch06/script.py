@@ -109,6 +109,7 @@ class Script:
         altstack = []
         while len(cmds) > 0:  # <2>
             cmd = cmds.pop(0)
+            print(stack)
             if type(cmd) == int:
                 operation = OP_CODE_FUNCTIONS[cmd]  # <3>
                 if cmd in (99, 100):  # <4>
