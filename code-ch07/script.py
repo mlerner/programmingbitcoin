@@ -13,7 +13,6 @@ from op import (
     OP_CODE_NAMES,
 )
 
-
 # tag::source1[]
 def p2pkh_script(h160):
     '''Takes a hash160 and returns the p2pkh ScriptPubKey'''
